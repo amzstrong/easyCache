@@ -98,7 +98,7 @@ func (list *DoubleLinkedList) Remove(node *DoubleLinkedNode) {
 func (list *DoubleLinkedList) Search(search string) (*DoubleLinkedNode, bool) {
 	p := list.Head
 	for p != nil {
-		if p.Data == search {
+		if p.Data.Value == search {
 			return p, true
 		}
 		p = p.Next

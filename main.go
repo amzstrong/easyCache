@@ -16,8 +16,9 @@ func init() {
 }
 func main() {
 
-	http.HandleFunc("/get", getHandler)//get
-	http.HandleFunc("/set", setHandler)//post
+	http.HandleFunc("/get", getHandler) //get
+	http.HandleFunc("/set", setHandler) //post
+	http.HandleFunc("/del", delHandler) //get
 	log.Fatal(http.ListenAndServe("localhost:8000", nil))
 }
 
@@ -51,6 +52,7 @@ func getHandler(writer http.ResponseWriter, request *http.Request) {
 type setDataPackage struct {
 	Key   string
 	Value string
+	Time  int64
 }
 
 //{"key":"","value":""}
@@ -62,14 +64,14 @@ func setHandler(writer http.ResponseWriter, request *http.Request) {
 		body, _ := ioutil.ReadAll(request.Body)
 		json.Unmarshal(body, &p)
 
-		fmt.Println("k:"+p.Key, "v:"+p.Value)
+		fmt.Println("k:"+p.Key, "v:"+p.Value, "time:", p.Time)
 
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(200)
 		var data map[string]interface{}
 
 		if p.Key != "" && p.Value != "" {
-			cache.Set(p.Key, p.Value)
+			cache.Set(p.Key, p.Value, p.Time)
 			data = map[string]interface{}{
 				"code":    200,
 				"message": "ok",
@@ -87,6 +89,33 @@ func setHandler(writer http.ResponseWriter, request *http.Request) {
 	} else {
 		writer.WriteHeader(404)
 		writer.Write([]byte("404 page not found"))
+		return
+	}
+}
+
+func delHandler(writer http.ResponseWriter, request *http.Request) {
+
+	writer.Header().Set("Content-Type", "application/json")
+	writer.WriteHeader(200)
+	var data map[string]interface{}
+	query := request.URL.Query()
+	key := query.Get("key")
+	if value, ok := cache.Get(key); ok {
+		cache.Remove(key)
+		data = map[string]interface{}{
+			"code":    200,
+			"message": "ok",
+			"data":    value,
+		}
+		json.NewEncoder(writer).Encode(data)
+		return
+	} else {
+		data = map[string]interface{}{
+			"code":    200,
+			"message": "not found",
+			"data":    nil,
+		}
+		json.NewEncoder(writer).Encode(data)
 		return
 	}
 }

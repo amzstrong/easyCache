@@ -4,16 +4,18 @@ import (
 	"easyCache/lru"
 	"fmt"
 	"testing"
+	"time"
 )
 
 
 func TestLpush(t *testing.T)  {
 	dl:=lru.NewDoubleLinkedList()
 
-	dl.Lpush(lru.NewDoubleLinkedNode("a"))
-	dl.Lpush(lru.NewDoubleLinkedNode("b"))
-	dl.Lpush(lru.NewDoubleLinkedNode("c"))
-	dl.Lpush(lru.NewDoubleLinkedNode("d"))
+	dl.Lpush(lru.NewDoubleLinkedNode(lru.NewItem("a",-1)))
+	dl.Lpush(lru.NewDoubleLinkedNode(lru.NewItem("b",-1)))
+	dl.Lpush(lru.NewDoubleLinkedNode(lru.NewItem("c",-1)))
+	dl.Lpush(lru.NewDoubleLinkedNode(lru.NewItem("d",-1)))
+	dl.Lpush(lru.NewDoubleLinkedNode(lru.NewItem("e",-1)))
 	//
 	//fmt.Println(dl.GetTail().Data)
 	//fmt.Println(dl.GetHead().Data)
@@ -40,8 +42,10 @@ func TestLpush(t *testing.T)  {
 
 func TestCahce(T *testing.T)  {
 
-	c := lru.NewCache(10)
-	c.Set("a","1234567890")
-	d,ok:=c.Get("a")
-	fmt.Println(d,ok)
+	//c := lru.NewCache(10)
+	//c.Set("a","1234567890")
+	//d,ok:=c.Get("a")
+	//fmt.Println(d,ok)
+	a:=time.Now()
+	fmt.Println(a)
 }
